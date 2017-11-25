@@ -96,7 +96,7 @@ func wsGameHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// for benchmark
-	defer profile.Start(profile.CPUProfile).Stop()
+	//defer profile.Start(profile.CPUProfile).Stop()
 	// for benchmark
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
