@@ -90,15 +90,17 @@ type GameStatus struct {
 }
 
 type mItem struct {
-	ItemID int   `db:"item_id"`
-	Power1 int64 `db:"power1"`
-	Power2 int64 `db:"power2"`
-	Power3 int64 `db:"power3"`
-	Power4 int64 `db:"power4"`
-	Price1 int64 `db:"price1"`
-	Price2 int64 `db:"price2"`
-	Price3 int64 `db:"price3"`
-	Price4 int64 `db:"price4"`
+	ItemID       int   `db:"item_id"`
+	Power1       int64 `db:"power1"`
+	Power2       int64 `db:"power2"`
+	Power3       int64 `db:"power3"`
+	Power4       int64 `db:"power4"`
+	Price1       int64 `db:"price1"`
+	Price2       int64 `db:"price2"`
+	Price3       int64 `db:"price3"`
+	Price4       int64 `db:"price4"`
+	PowerByCount map[int]*big.Int
+	PriceByCount map[int]*big.Int
 }
 
 var (
@@ -123,23 +125,40 @@ func init() {
 	// |      12 |   1000 |   9000 |      0 |     17 |    963 |   7689 |      1 |     19 |
 	// |      13 |  11000 |  11000 |  11000 |     23 |  10000 |      2 |      2 |     29 |
 	// +---------+--------+--------+--------+--------+--------+--------+--------+--------+
+	cacheNum := 50
 	mItemById = make(map[int]mItem, 13)
-	mItemById[1] = mItem{1, 0, 1, 0, 1, 0, 1, 1, 1}
-	mItemById[2] = mItem{2, 0, 1, 1, 1, 0, 1, 2, 1}
-	mItemById[3] = mItem{3, 1, 10, 0, 2, 1, 3, 1, 2}
-	mItemById[4] = mItem{4, 1, 24, 1, 2, 1, 10, 0, 3}
-	mItemById[5] = mItem{5, 1, 25, 100, 3, 2, 20, 20, 2}
-	mItemById[6] = mItem{6, 1, 30, 147, 13, 1, 22, 69, 17}
-	mItemById[7] = mItem{7, 5, 80, 128, 6, 6, 61, 200, 5}
-	mItemById[8] = mItem{8, 20, 340, 180, 3, 9, 105, 134, 14}
-	mItemById[9] = mItem{9, 55, 520, 335, 5, 48, 243, 600, 7}
-	mItemById[10] = mItem{10, 157, 1071, 1700, 12, 157, 625, 1000, 13}
-	mItemById[11] = mItem{11, 2000, 7500, 2600, 3, 2001, 5430, 1000, 3}
-	mItemById[12] = mItem{12, 1000, 9000, 0, 17, 963, 7689, 1, 19}
-	mItemById[13] = mItem{13, 11000, 11000, 11000, 23, 10000, 2, 2, 29}
+	mItemById[1] = mItem{1, 0, 1, 0, 1, 0, 1, 1, 1, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[2] = mItem{2, 0, 1, 1, 1, 0, 1, 2, 1, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[3] = mItem{3, 1, 10, 0, 2, 1, 3, 1, 2, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[4] = mItem{4, 1, 24, 1, 2, 1, 10, 0, 3, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[5] = mItem{5, 1, 25, 100, 3, 2, 20, 20, 2, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[6] = mItem{6, 1, 30, 147, 13, 1, 22, 69, 17, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[7] = mItem{7, 5, 80, 128, 6, 6, 61, 200, 5, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[8] = mItem{8, 20, 340, 180, 3, 9, 105, 134, 14, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[9] = mItem{9, 55, 520, 335, 5, 48, 243, 600, 7, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[10] = mItem{10, 157, 1071, 1700, 12, 157, 625, 1000, 13, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[11] = mItem{11, 2000, 7500, 2600, 3, 2001, 5430, 1000, 3, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[12] = mItem{12, 1000, 9000, 0, 17, 963, 7689, 1, 19, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	mItemById[13] = mItem{13, 11000, 11000, 11000, 23, 10000, 2, 2, 29, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+
+	for _, item := range mItemById {
+		for count := 0; count < cacheNum; count++ {
+			item.PowerByCount[count] = item.GetPowerWithoutCache(count)
+			item.PriceByCount[count] = item.GetPriceWithoutCache(count)
+		}
+	}
 }
 
 func (item *mItem) GetPower(count int) *big.Int {
+	cache, ok := item.PowerByCount[count]
+	if ok {
+		return cache
+	} else {
+		return item.GetPowerWithoutCache(count)
+	}
+}
+
+func (item *mItem) GetPowerWithoutCache(count int) *big.Int {
 	// power(x):=(cx+1)*d^(ax+b)
 	a := item.Power1
 	b := item.Power2
@@ -153,6 +172,15 @@ func (item *mItem) GetPower(count int) *big.Int {
 }
 
 func (item *mItem) GetPrice(count int) *big.Int {
+	cache, ok := item.PriceByCount[count]
+	if ok {
+		return cache
+	} else {
+		return item.GetPriceWithoutCache(count)
+	}
+}
+
+func (item *mItem) GetPriceWithoutCache(count int) *big.Int {
 	// price(x):=(cx+1)*d^(ax+b)
 	a := item.Price1
 	b := item.Price2
