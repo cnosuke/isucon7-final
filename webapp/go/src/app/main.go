@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/pkg/profile"
 )
 
 var (
@@ -93,6 +95,10 @@ func wsGameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// for benchmark
+	defer profile.Start(profile.CPUProfile).Stop()
+	// for benchmark
+
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	initDB()
 
