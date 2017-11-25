@@ -3,6 +3,7 @@ require 'sinatra/base'
 #require 'newrelic_rpm'
 require './game'
 require 'pry'
+require 'open-uri'
 
 class App < Sinatra::Base
   use Game
@@ -18,6 +19,15 @@ class App < Sinatra::Base
 
   get '/initialize' do
     Game.initialize!
+
+    if ENV['RACK_ENV'] == 'production'
+      Game::HOSTS[1..-1].each do |h|
+        Thread.new do
+          open("http://#{h}/initialize").read
+        end
+      end
+    end
+
     204
   end
 
