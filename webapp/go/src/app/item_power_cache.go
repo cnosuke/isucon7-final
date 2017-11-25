@@ -8,9 +8,6 @@ import (
 
 	"io/ioutil"
 
-	"fmt"
-	"os"
-
 	"github.com/k0kubun/pp"
 	"gopkg.in/yaml.v2"
 )
@@ -50,12 +47,7 @@ type ItemPowerCache struct {
 
 func LoadItemPowerCache() []*ItemPowerCache {
 	// /Users/cnosuke/dev/src/github.com/cnosuke/isucon7-final/webapp/go/src/app/out.json"
-	jsonPathPre := os.Getenv("JSON_CACHE_DIR_PREFIX")
-	if jsonPathPre == "" {
-		jsonPathPre = "/home/isucon/data/"
-	}
-
-	bytes, err := ioutil.ReadFile(fmt.Sprintf("%s/out.json", jsonPathPre))
+	bytes, err := ioutil.ReadFile("/home/isucon/data/out.json")
 
 	if err != nil {
 		log.Fatal(err)

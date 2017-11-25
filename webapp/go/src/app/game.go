@@ -128,28 +128,28 @@ func init() {
 	// |      12 |   1000 |   9000 |      0 |     17 |    963 |   7689 |      1 |     19 |
 	// |      13 |  11000 |  11000 |  11000 |     23 |  10000 |      2 |      2 |     29 |
 	// +---------+--------+--------+--------+--------+--------+--------+--------+--------+
-	cacheNum := 80
-	mItemById = make(map[int]mItem, 13)
-	mItemById[1] = mItem{1, 0, 1, 0, 1, 0, 1, 1, 1, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[2] = mItem{2, 0, 1, 1, 1, 0, 1, 2, 1, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[3] = mItem{3, 1, 10, 0, 2, 1, 3, 1, 2, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[4] = mItem{4, 1, 24, 1, 2, 1, 10, 0, 3, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[5] = mItem{5, 1, 25, 100, 3, 2, 20, 20, 2, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[6] = mItem{6, 1, 30, 147, 13, 1, 22, 69, 17, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[7] = mItem{7, 5, 80, 128, 6, 6, 61, 200, 5, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[8] = mItem{8, 20, 340, 180, 3, 9, 105, 134, 14, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[9] = mItem{9, 55, 520, 335, 5, 48, 243, 600, 7, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[10] = mItem{10, 157, 1071, 1700, 12, 157, 625, 1000, 13, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[11] = mItem{11, 2000, 7500, 2600, 3, 2001, 5430, 1000, 3, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[12] = mItem{12, 1000, 9000, 0, 17, 963, 7689, 1, 19, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-	mItemById[13] = mItem{13, 11000, 11000, 11000, 23, 10000, 2, 2, 29, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
-
-	for _, item := range mItemById {
-		for count := 0; count < cacheNum; count++ {
-			item.PowerByCount[count] = item.GetPowerWithoutCache(count)
-			item.PriceByCount[count] = item.GetPriceWithoutCache(count)
-		}
-	}
+	//cacheNum := 80
+	//mItemById = make(map[int]mItem, 13)
+	//mItemById[1] = mItem{1, 0, 1, 0, 1, 0, 1, 1, 1, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[2] = mItem{2, 0, 1, 1, 1, 0, 1, 2, 1, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[3] = mItem{3, 1, 10, 0, 2, 1, 3, 1, 2, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[4] = mItem{4, 1, 24, 1, 2, 1, 10, 0, 3, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[5] = mItem{5, 1, 25, 100, 3, 2, 20, 20, 2, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[6] = mItem{6, 1, 30, 147, 13, 1, 22, 69, 17, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[7] = mItem{7, 5, 80, 128, 6, 6, 61, 200, 5, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[8] = mItem{8, 20, 340, 180, 3, 9, 105, 134, 14, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[9] = mItem{9, 55, 520, 335, 5, 48, 243, 600, 7, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[10] = mItem{10, 157, 1071, 1700, 12, 157, 625, 1000, 13, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[11] = mItem{11, 2000, 7500, 2600, 3, 2001, 5430, 1000, 3, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[12] = mItem{12, 1000, 9000, 0, 17, 963, 7689, 1, 19, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//mItemById[13] = mItem{13, 11000, 11000, 11000, 23, 10000, 2, 2, 29, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum)}
+	//
+	//for _, item := range mItemById {
+	//	for count := 0; count < cacheNum; count++ {
+	//		item.PowerByCount[count] = item.GetPowerWithoutCache(count)
+	//		item.PriceByCount[count] = item.GetPriceWithoutCache(count)
+	//	}
+	//}
 
 	big1000 = big.NewInt(1000)
 	big10Pow15 = big.NewInt(1000000000000000)
@@ -160,7 +160,6 @@ func (item *mItem) GetPower(count int) *big.Int {
 	if itemCache != nil {
 		countCache := itemCache.BigIntPowers[count]
 		if countCache != nil {
-			fmt.Println("cache load")
 			return countCache
 		}
 	}
