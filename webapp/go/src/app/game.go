@@ -220,12 +220,7 @@ func big2exp(n *big.Int) Exponential {
 	s := n.String()
 	ketasuu := int64(len(s))
 
-	t := n
-	diver := pow10ByN[ketasuu-15]
-	if diver > 0 {
-		t = new(big.Int).Div(n, big.NewInt(diver))
-	}
-	return Exponential{t.Int64(), ketasuu - 15}
+	return Exponential{new(big.Int).Div(n, big.NewInt(pow10ByN[ketasuu-15])).Int64(), ketasuu - 15}
 }
 
 func getCurrentTime() (int64, error) {
