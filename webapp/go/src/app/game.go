@@ -596,7 +596,7 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 }
 
 func serveGameConn(ws *websocket.Conn, roomName string) {
-	log.Println(ws.RemoteAddr(), "serveGameConn", roomName)
+	//log.Println(ws.RemoteAddr(), "serveGameConn", roomName)
 	defer ws.Close()
 
 	status, err := getStatus(roomName)
@@ -640,7 +640,7 @@ func serveGameConn(ws *websocket.Conn, roomName string) {
 	for {
 		select {
 		case req := <-chReq:
-			log.Println(req)
+			//log.Println(req)
 
 			success := false
 			switch req.Action {
