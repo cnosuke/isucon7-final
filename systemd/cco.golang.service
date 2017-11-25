@@ -8,8 +8,8 @@ ExecStart = /home/isucon/webapp/go/app
 
 Restart   = always
 Type      = simple
-User      = root
-Group     = root
+User      = isucon
+Group     = isucon
 
 [Install]
 WantedBy = multi-user.target
