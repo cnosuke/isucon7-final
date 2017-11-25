@@ -80,7 +80,7 @@ class Game
 
       @power_by_count = {}
       @price_by_count = {}
-      (0..50).each do |count|
+      (0..500).each do |count|
         @power_by_count[count] = _get_power(count)
         @price_by_count[count] = _get_price(count)
       end
