@@ -106,7 +106,7 @@ var (
 	mItemById  map[int]mItem
 	big1000    *big.Int
 	big10Pow15 *big.Int
-	pow10ByN   map[int64]int64
+	pow10ByN   map[int64]*big.Int
 )
 
 func init() {
@@ -153,11 +153,11 @@ func init() {
 	big1000 = big.NewInt(1000)
 	big10Pow15 = big.NewInt(1000000000000000)
 
-	powNum := 30
-	pow10ByN = make(map[int64]int64, powNum)
-	currentPow10 := int64(1)
+	powNum := 40
+	pow10ByN = make(map[int64]*big.Int, powNum)
+	currentPow10 := big.NewInt(1)
 	for i := 1; i <= powNum; i++ {
-		currentPow10 *= 10
+		currentPow10 = new(big.Int).Mul(currentPow10, big.NewInt(10))
 		pow10ByN[int64(i)] = currentPow10
 	}
 }
@@ -222,8 +222,8 @@ func big2exp(n *big.Int) Exponential {
 
 	t := n
 	diver := pow10ByN[ketasuu-15]
-	if diver > 0 {
-		t = new(big.Int).Div(n, big.NewInt(diver))
+	if diver.Int64() > 0 {
+		t = new(big.Int).Div(n, diver)
 	}
 	return Exponential{t.Int64(), ketasuu - 15}
 }
