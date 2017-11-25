@@ -105,6 +105,7 @@ type mItem struct {
 
 var (
 	mItemById map[int]mItem
+	big1000   *big.Int
 )
 
 func init() {
@@ -147,6 +148,8 @@ func init() {
 			item.PriceByCount[count] = item.GetPriceWithoutCache(count)
 		}
 	}
+
+	big1000 = big.NewInt(1000)
 }
 
 func (item *mItem) GetPower(count int) *big.Int {
@@ -348,7 +351,7 @@ func buyItem(roomName string, itemID int, countBought int, reqTime int64) bool {
 	}
 
 	for _, a := range addings {
-		totalMilliIsu.Add(totalMilliIsu, new(big.Int).Mul(str2big(a.Isu), big.NewInt(1000)))
+		totalMilliIsu.Add(totalMilliIsu, new(big.Int).Mul(str2big(a.Isu), big1000))
 	}
 
 	var buyings []Buying
@@ -360,7 +363,7 @@ func buyItem(roomName string, itemID int, countBought int, reqTime int64) bool {
 	}
 	for _, b := range buyings {
 		item := mItemById[b.ItemID]
-		cost := new(big.Int).Mul(item.GetPrice(b.Ordinal), big.NewInt(1000))
+		cost := new(big.Int).Mul(item.GetPrice(b.Ordinal), big1000)
 		totalMilliIsu.Sub(totalMilliIsu, cost)
 		if b.Time <= reqTime {
 			gain := new(big.Int).Mul(item.GetPower(b.Ordinal), big.NewInt(reqTime-b.Time))
@@ -369,7 +372,7 @@ func buyItem(roomName string, itemID int, countBought int, reqTime int64) bool {
 	}
 
 	item := mItemById[itemID]
-	need := new(big.Int).Mul(item.GetPrice(countBought+1), big.NewInt(1000))
+	need := new(big.Int).Mul(item.GetPrice(countBought+1), big1000)
 	if totalMilliIsu.Cmp(need) < 0 {
 		log.Println("not enough")
 		tx.Rollback()
@@ -466,7 +469,7 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 	for _, a := range addings {
 		// adding は adding.time に isu を増加させる
 		if a.Time <= currentTime {
-			totalMilliIsu.Add(totalMilliIsu, new(big.Int).Mul(str2big(a.Isu), big.NewInt(1000)))
+			totalMilliIsu.Add(totalMilliIsu, new(big.Int).Mul(str2big(a.Isu), big1000))
 		} else {
 			addingAt[a.Time] = a
 		}
@@ -476,7 +479,7 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 		// buying は 即座に isu を消費し buying.time からアイテムの効果を発揮する
 		itemBought[b.ItemID]++
 		m := mItems[b.ItemID]
-		totalMilliIsu.Sub(totalMilliIsu, new(big.Int).Mul(m.GetPrice(b.Ordinal), big.NewInt(1000)))
+		totalMilliIsu.Sub(totalMilliIsu, new(big.Int).Mul(m.GetPrice(b.Ordinal), big1000))
 
 		if b.Time <= currentTime {
 			itemBuilt[b.ItemID]++
@@ -494,7 +497,7 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 		itemBuilt0[m.ItemID] = itemBuilt[m.ItemID]
 		price := m.GetPrice(itemBought[m.ItemID] + 1)
 		itemPrice[m.ItemID] = price
-		if 0 <= totalMilliIsu.Cmp(new(big.Int).Mul(price, big.NewInt(1000))) {
+		if 0 <= totalMilliIsu.Cmp(new(big.Int).Mul(price, big1000)) {
 			itemOnSale[m.ItemID] = 0 // 0 は 時刻 currentTime で購入可能であることを表す
 		}
 	}
@@ -515,7 +518,7 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 		// 時刻 t で発生する adding を計算する
 		if a, ok := addingAt[t]; ok {
 			updated = true
-			totalMilliIsu.Add(totalMilliIsu, new(big.Int).Mul(str2big(a.Isu), big.NewInt(1000)))
+			totalMilliIsu.Add(totalMilliIsu, new(big.Int).Mul(str2big(a.Isu), big1000))
 		}
 
 		// 時刻 t で発生する buying を計算する
@@ -552,7 +555,7 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 			if _, ok := itemOnSale[itemID]; ok {
 				continue
 			}
-			if 0 <= totalMilliIsu.Cmp(new(big.Int).Mul(itemPrice[itemID], big.NewInt(1000))) {
+			if 0 <= totalMilliIsu.Cmp(new(big.Int).Mul(itemPrice[itemID], big1000)) {
 				itemOnSale[itemID] = t
 			}
 		}
