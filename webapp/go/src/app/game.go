@@ -131,7 +131,7 @@ func init() {
 	// |      12 |   1000 |   9000 |      0 |     17 |    963 |   7689 |      1 |     19 |
 	// |      13 |  11000 |  11000 |  11000 |     23 |  10000 |      2 |      2 |     29 |
 	// +---------+--------+--------+--------+--------+--------+--------+--------+--------+
-	cacheNum := 45
+	cacheNum := 80
 	mItemById = make(map[int]mItem, 13)
 	mItemById[1] = mItem{1, 0, 1, 0, 1, 0, 1, 1, 1, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum), make(map[int]Exponential, cacheNum)}
 	mItemById[2] = mItem{2, 0, 1, 1, 1, 0, 1, 2, 1, make(map[int]*big.Int, cacheNum), make(map[int]*big.Int, cacheNum), make(map[int]Exponential, cacheNum)}
