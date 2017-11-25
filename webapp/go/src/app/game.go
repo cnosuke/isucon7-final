@@ -222,6 +222,7 @@ func big2exp(n *big.Int) Exponential {
 	ketasuu := int64(len(s))
 
 	t := n
+	fmt.Printf("debug: %d\n", ketasuu-15)
 	diver := pow10ByN[ketasuu-15]
 	if diver.Int64() > 0 {
 		t = new(big.Int).Div(n, diver)
