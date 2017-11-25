@@ -101,6 +101,44 @@ type mItem struct {
 	Price4 int64 `db:"price4"`
 }
 
+var (
+	mItemById map[int]mItem
+)
+
+func init() {
+	// +---------+--------+--------+--------+--------+--------+--------+--------+--------+
+	// | item_id | power1 | power2 | power3 | power4 | price1 | price2 | price3 | price4 |
+	// +---------+--------+--------+--------+--------+--------+--------+--------+--------+
+	// |       1 |      0 |      1 |      0 |      1 |      0 |      1 |      1 |      1 |
+	// |       2 |      0 |      1 |      1 |      1 |      0 |      1 |      2 |      1 |
+	// |       3 |      1 |     10 |      0 |      2 |      1 |      3 |      1 |      2 |
+	// |       4 |      1 |     24 |      1 |      2 |      1 |     10 |      0 |      3 |
+	// |       5 |      1 |     25 |    100 |      3 |      2 |     20 |     20 |      2 |
+	// |       6 |      1 |     30 |    147 |     13 |      1 |     22 |     69 |     17 |
+	// |       7 |      5 |     80 |    128 |      6 |      6 |     61 |    200 |      5 |
+	// |       8 |     20 |    340 |    180 |      3 |      9 |    105 |    134 |     14 |
+	// |       9 |     55 |    520 |    335 |      5 |     48 |    243 |    600 |      7 |
+	// |      10 |    157 |   1071 |   1700 |     12 |    157 |    625 |   1000 |     13 |
+	// |      11 |   2000 |   7500 |   2600 |      3 |   2001 |   5430 |   1000 |      3 |
+	// |      12 |   1000 |   9000 |      0 |     17 |    963 |   7689 |      1 |     19 |
+	// |      13 |  11000 |  11000 |  11000 |     23 |  10000 |      2 |      2 |     29 |
+	// +---------+--------+--------+--------+--------+--------+--------+--------+--------+
+	mItemById = make(map[int]mItem, 13)
+	mItemById[1] = mItem{1, 0, 1, 0, 1, 0, 1, 1, 1}
+	mItemById[2] = mItem{2, 0, 1, 1, 1, 0, 1, 2, 1}
+	mItemById[3] = mItem{3, 1, 10, 0, 2, 1, 3, 1, 2}
+	mItemById[4] = mItem{4, 1, 24, 1, 2, 1, 10, 0, 3}
+	mItemById[5] = mItem{5, 1, 25, 100, 3, 2, 20, 20, 2}
+	mItemById[6] = mItem{6, 1, 30, 147, 13, 1, 22, 69, 17}
+	mItemById[7] = mItem{7, 5, 80, 128, 6, 6, 61, 200, 5}
+	mItemById[8] = mItem{8, 20, 340, 180, 3, 9, 105, 134, 14}
+	mItemById[9] = mItem{9, 55, 520, 335, 5, 48, 243, 600, 7}
+	mItemById[10] = mItem{10, 157, 1071, 1700, 12, 157, 625, 1000, 13}
+	mItemById[11] = mItem{11, 2000, 7500, 2600, 3, 2001, 5430, 1000, 3}
+	mItemById[12] = mItem{12, 1000, 9000, 0, 17, 963, 7689, 1, 19}
+	mItemById[13] = mItem{13, 11000, 11000, 11000, 23, 10000, 2, 2, 29}
+}
+
 func (item *mItem) GetPower(count int) *big.Int {
 	// power(x):=(cx+1)*d^(ax+b)
 	a := item.Power1
@@ -293,8 +331,7 @@ func buyItem(roomName string, itemID int, countBought int, reqTime int64) bool {
 		return false
 	}
 	for _, b := range buyings {
-		var item mItem
-		tx.Get(&item, "SELECT * FROM m_item WHERE item_id = ?", b.ItemID)
+		item := mItemById[b.ItemID]
 		cost := new(big.Int).Mul(item.GetPrice(b.Ordinal), big.NewInt(1000))
 		totalMilliIsu.Sub(totalMilliIsu, cost)
 		if b.Time <= reqTime {
@@ -303,8 +340,7 @@ func buyItem(roomName string, itemID int, countBought int, reqTime int64) bool {
 		}
 	}
 
-	var item mItem
-	tx.Get(&item, "SELECT * FROM m_item WHERE item_id = ?", itemID)
+	item := mItemById[itemID]
 	need := new(big.Int).Mul(item.GetPrice(countBought+1), big.NewInt(1000))
 	if totalMilliIsu.Cmp(need) < 0 {
 		log.Println("not enough")
@@ -339,16 +375,7 @@ func getStatus(roomName string) (*GameStatus, error) {
 		return nil, fmt.Errorf("updateRoomTime failure")
 	}
 
-	mItems := map[int]mItem{}
-	var items []mItem
-	err = tx.Select(&items, "SELECT * FROM m_item")
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-	for _, item := range items {
-		mItems[item.ItemID] = item
-	}
+	mItems := mItemById
 
 	addings := []Adding{}
 	err = tx.Select(&addings, "SELECT time, isu FROM adding WHERE room_name = ?", roomName)
