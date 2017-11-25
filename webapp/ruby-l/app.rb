@@ -2,6 +2,7 @@ require 'erb'
 require 'sinatra/base'
 #require 'newrelic_rpm'
 require './game'
+require 'pry'
 
 class App < Sinatra::Base
   use Game
@@ -20,17 +21,30 @@ class App < Sinatra::Base
     204
   end
 
-  get '/room/' do
-    content_type :json
-    { 'host' => '', 'path' => '/ws' }.to_json
+  # これ使って無いわ
+  # get '/room/' do
+  #   content_type :json
+  #   { 'host' => '', 'path' => '/ws' }.to_json
+  # end
+
+  get '/pry' do
+    binding.pry
+    'ok'
   end
 
   get '/room/:room_name' do
     room_name = ERB::Util.url_encode(params[:room_name])
+
+    unless ENV['RACK_ENV'] == 'production'
+      host = "localhost:9292"
+    else
+      host = Game.get_or_create_host_by_room(room_name)
+    end
+
     path = "/ws/#{room_name}"
 
     content_type :json
-    { 'host' => '', 'path' => path }.to_json
+    { 'host' => host, 'path' => path }.to_json
   end
 
   get '/' do
