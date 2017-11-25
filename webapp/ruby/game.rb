@@ -94,6 +94,39 @@ class Game
     end
   end
 
+  # +---------+--------+--------+--------+--------+--------+--------+--------+--------+
+  # | item_id | power1 | power2 | power3 | power4 | price1 | price2 | price3 | price4 |
+  # +---------+--------+--------+--------+--------+--------+--------+--------+--------+
+  # |       1 |      0 |      1 |      0 |      1 |      0 |      1 |      1 |      1 |
+  # |       2 |      0 |      1 |      1 |      1 |      0 |      1 |      2 |      1 |
+  # |       3 |      1 |     10 |      0 |      2 |      1 |      3 |      1 |      2 |
+  # |       4 |      1 |     24 |      1 |      2 |      1 |     10 |      0 |      3 |
+  # |       5 |      1 |     25 |    100 |      3 |      2 |     20 |     20 |      2 |
+  # |       6 |      1 |     30 |    147 |     13 |      1 |     22 |     69 |     17 |
+  # |       7 |      5 |     80 |    128 |      6 |      6 |     61 |    200 |      5 |
+  # |       8 |     20 |    340 |    180 |      3 |      9 |    105 |    134 |     14 |
+  # |       9 |     55 |    520 |    335 |      5 |     48 |    243 |    600 |      7 |
+  # |      10 |    157 |   1071 |   1700 |     12 |    157 |    625 |   1000 |     13 |
+  # |      11 |   2000 |   7500 |   2600 |      3 |   2001 |   5430 |   1000 |      3 |
+  # |      12 |   1000 |   9000 |      0 |     17 |    963 |   7689 |      1 |     19 |
+  # |      13 |  11000 |  11000 |  11000 |     23 |  10000 |      2 |      2 |     29 |
+  # +---------+--------+--------+--------+--------+--------+--------+--------+--------+
+  MITEM_BY_ID = {
+     1 => MItem.new(item_id:  1, power1:      0, power2:     1, power3:     0, power4:     1, price1:     0, price2:     1, price3:     1, price4:     1),
+     2 => MItem.new(item_id:  2, power1:      0, power2:     1, power3:     1, power4:     1, price1:     0, price2:     1, price3:     2, price4:     1),
+     3 => MItem.new(item_id:  3, power1:      1, power2:    10, power3:     0, power4:     2, price1:     1, price2:     3, price3:     1, price4:     2),
+     4 => MItem.new(item_id:  4, power1:      1, power2:    24, power3:     1, power4:     2, price1:     1, price2:    10, price3:     0, price4:     3),
+     5 => MItem.new(item_id:  5, power1:      1, power2:    25, power3:   100, power4:     3, price1:     2, price2:    20, price3:    20, price4:     2),
+     6 => MItem.new(item_id:  6, power1:      1, power2:    30, power3:   147, power4:    13, price1:     1, price2:    22, price3:    69, price4:    17),
+     7 => MItem.new(item_id:  7, power1:      5, power2:    80, power3:   128, power4:     6, price1:     6, price2:    61, price3:   200, price4:     5),
+     8 => MItem.new(item_id:  8, power1:     20, power2:   340, power3:   180, power4:     3, price1:     9, price2:   105, price3:   134, price4:    14),
+     9 => MItem.new(item_id:  9, power1:     55, power2:   520, power3:   335, power4:     5, price1:    48, price2:   243, price3:   600, price4:     7),
+    10 => MItem.new(item_id: 10, power1:    157, power2:  1071, power3:  1700, power4:    12, price1:   157, price2:   625, price3:  1000, price4:    13),
+    11 => MItem.new(item_id: 11, power1:   2000, power2:  7500, power3:  2600, power4:     3, price1:  2001, price2:  5430, price3:  1000, price4:     3),
+    12 => MItem.new(item_id: 12, power1:   1000, power2:  9000, power3:     0, power4:    17, price1:   963, price2:  7689, price3:     1, price4:    19),
+    13 => MItem.new(item_id: 13, power1:  11000, power2: 11000, power3: 11000, power4:    23, price1: 10000, price2:     2, price3:     2, price4:    29),
+  }.freeze
+
   class << self
     def initialize!
       conn = connect_db
@@ -228,21 +261,7 @@ class Game
         statement.close
 
         buyings.each do |b|
-          statement = conn.prepare('SELECT * FROM m_item WHERE item_id = ?')
-          item = statement.execute(b.item_id).map do |raw_item|
-            MItem.new(
-              item_id: raw_item['item_id'],
-              power1: raw_item['power1'],
-              power2: raw_item['power2'],
-              power3: raw_item['power3'],
-              power4: raw_item['power4'],
-              price1: raw_item['price1'],
-              price2: raw_item['price2'],
-              price3: raw_item['price3'],
-              price4: raw_item['price4'],
-            )
-          end.first
-          statement.close
+          item = MITEM_BY_ID.fetch(b.item_id)
           cost = item.get_price(b.ordinal) * 1000
           total_milli_isu -= cost
           if b.time <= req_time
@@ -251,21 +270,7 @@ class Game
           end
         end
 
-        statement = conn.prepare('SELECT * FROM m_item WHERE item_id = ?')
-        item = statement.execute(item_id).map do |raw_item|
-          MItem.new(
-            item_id: raw_item['item_id'],
-            power1: raw_item['power1'],
-            power2: raw_item['power2'],
-            power3: raw_item['power3'],
-            power4: raw_item['power4'],
-            price1: raw_item['price1'],
-            price2: raw_item['price2'],
-            price3: raw_item['price3'],
-            price4: raw_item['price4'],
-          )
-        end.first
-        statement.close
+        item = MITEM_BY_ID.fetch(item_id)
         need = item.get_price(count_bought + 1) * 1000
         if total_milli_isu < need
           puts 'not enough'
@@ -296,13 +301,7 @@ class Game
 
         current_time = update_room_time(conn, room_name, 0)
 
-        mitems = {}
-        items = conn.query('SELECT * FROM m_item', symbolize_keys: true).map do |mitem|
-          MItem.new(mitem)
-        end
-        items.each do |item|
-          mitems[item.item_id] = item
-        end
+        mitems = MITEM_BY_ID
 
         statement = conn.prepare('SELECT time, isu FROM adding WHERE room_name = ?')
         addings = statement.execute(room_name).map do |fields|
