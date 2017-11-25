@@ -28,7 +28,7 @@ CREATE TABLE `buying` (
 CREATE TABLE `adding` (
   `room_name` varchar(191) COLLATE utf8mb4_bin NOT NULL,
   `time` bigint(20) NOT NULL,
-  `isu` longtext COLLATE utf8mb4_bin NOT NULL,
+  `isu` varchar(191) COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`room_name`,`time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
