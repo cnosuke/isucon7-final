@@ -18,8 +18,6 @@ class App < Sinatra::Base
   end
 
   get '/initialize' do
-    Game.initialize!
-
     if ENV['RACK_ENV'] == 'production'
       Game::HOSTS[1..-1].each do |h|
         Thread.new do
@@ -27,6 +25,8 @@ class App < Sinatra::Base
         end
       end
     end
+
+    Game.initialize!
 
     204
   end
