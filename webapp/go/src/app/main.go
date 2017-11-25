@@ -109,5 +109,10 @@ func main() {
 	r.HandleFunc("/ws/{room_name}", wsGameHandler)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("../public/")))
 
-	log.Fatal(http.ListenAndServe(":5000", handlers.LoggingHandler(os.Stderr, r)))
+	goPort := os.Getenv("ISU_GO_PORT")
+	if len(goPort) == 0 {
+		goPort = "0.0.0.0:5000"
+	}
+
+	log.Fatal(http.ListenAndServe(goPort, handlers.LoggingHandler(os.Stderr, r)))
 }
