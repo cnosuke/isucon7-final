@@ -4,6 +4,14 @@ require 'json'
 require 'mysql2'
 
 class Game
+  # 一個目はleaderなので実質使わない
+  HOSTS = %w(
+    app0131.isu7f.k0y.org
+    app0132.isu7f.k0y.org
+    app0133.isu7f.k0y.org
+    app0134.isu7f.k0y.org
+  )
+
   module Jsonable
     def to_json(*args)
       JSON.dump(as_json)
@@ -108,14 +116,6 @@ class Game
       end
     end
 
-    # 一個目はleaderなので実質使わない
-    HOSTS = %w(
-      app0131.isu7f.k0y.org
-      app0132.isu7f.k0y.org
-      app0133.isu7f.k0y.org
-      app0134.isu7f.k0y.org
-    )
-
     def get_or_create_host_by_room(name)
       conn = connect_db
       host_id = conn.query("SELECT host_id FROM rooms WHERE room_name = '#{name}'").first&.fetch('host_id')
@@ -131,7 +131,7 @@ class Game
       end
       conn.close
 
-      return HOSTS[host_id]
+      return Game::HOSTS[host_id]
     end
 
     def str2big(s)
