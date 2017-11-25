@@ -6,9 +6,9 @@ require 'mysql2'
 class Game
   HOSTS = %w(
     app0131.isu7f.k0y.org:8080
-    app0132.isu7f.k0y.org
-    app0133.isu7f.k0y.org
-    app0134.isu7f.k0y.org
+    app0132.isu7f.k0y.org:8080
+    app0133.isu7f.k0y.org:8080
+    app0134.isu7f.k0y.org:8080
   )
 
   module Jsonable
