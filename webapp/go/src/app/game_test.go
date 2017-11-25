@@ -22,8 +22,8 @@ func TestStatusEmpty(t *testing.T) {
 	assert.Empty(s.OnSale)
 
 	assert.Equal(int64(0), s.Schedule[0].Time)
-	assert.Equal(Exponential{0, 0}, s.Schedule[0].MilliIsu)
-	assert.Equal(Exponential{0, 0}, s.Schedule[0].TotalPower)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[0].MilliIsu)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[0].TotalPower)
 }
 
 // 椅子が増える
@@ -44,20 +44,20 @@ func TestStatusAdd(t *testing.T) {
 	assert.Len(s.Schedule, 4)
 
 	assert.Equal(int64(0), s.Schedule[0].Time)
-	assert.Equal(Exponential{0, 0}, s.Schedule[0].MilliIsu)
-	assert.Equal(Exponential{0, 0}, s.Schedule[0].TotalPower)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[0].MilliIsu)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[0].TotalPower)
 
 	assert.Equal(int64(100), s.Schedule[1].Time)
-	assert.Equal(Exponential{1000, 0}, s.Schedule[1].MilliIsu)
-	assert.Equal(Exponential{0, 0}, s.Schedule[1].TotalPower)
+	assert.Equal(Exponential{"[1000,0]"}, s.Schedule[1].MilliIsu)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[1].TotalPower)
 
 	assert.Equal(int64(200), s.Schedule[2].Time)
-	assert.Equal(Exponential{3000, 0}, s.Schedule[2].MilliIsu)
-	assert.Equal(Exponential{0, 0}, s.Schedule[2].TotalPower)
+	assert.Equal(Exponential{"[3000,0]"}, s.Schedule[2].MilliIsu)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[2].TotalPower)
 
 	assert.Equal(int64(300), s.Schedule[3].Time)
-	assert.Equal(Exponential{123456789012345, 7}, s.Schedule[3].MilliIsu)
-	assert.Equal(Exponential{0, 0}, s.Schedule[3].TotalPower)
+	assert.Equal(Exponential{"[123456789012345,7]"}, s.Schedule[3].MilliIsu)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[3].TotalPower)
 
 	s, err = calcStatus(500, mItems, addings, buyings)
 	assert.Nil(err)
@@ -65,8 +65,8 @@ func TestStatusAdd(t *testing.T) {
 	assert.Len(s.Schedule, 1)
 
 	assert.Equal(int64(500), s.Schedule[0].Time)
-	assert.Equal(Exponential{123456789012345, 7}, s.Schedule[0].MilliIsu)
-	assert.Equal(Exponential{0, 0}, s.Schedule[0].TotalPower)
+	assert.Equal(Exponential{"[123456789012345,7]"}, s.Schedule[0].MilliIsu)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[0].TotalPower)
 }
 
 // 試しに１個買う
@@ -92,12 +92,12 @@ func TestStatusBuySingle(t *testing.T) {
 	assert.Len(s.Items, 1)
 
 	assert.Equal(int64(0), s.Schedule[0].Time)
-	assert.Equal(Exponential{0, 0}, s.Schedule[0].MilliIsu)
-	assert.Equal(Exponential{0, 0}, s.Schedule[0].TotalPower)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[0].MilliIsu)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[0].TotalPower)
 
 	assert.Equal(int64(100), s.Schedule[1].Time)
-	assert.Equal(Exponential{0, 0}, s.Schedule[1].MilliIsu)
-	assert.Equal(Exponential{10, 0}, s.Schedule[1].TotalPower)
+	assert.Equal(Exponential{"[0,0]"}, s.Schedule[1].MilliIsu)
+	assert.Equal(Exponential{"[10,0]"}, s.Schedule[1].TotalPower)
 }
 
 // 購入時間を見ます
@@ -123,9 +123,9 @@ func TestOnSale(t *testing.T) {
 	assert.Equal(OnSale{ItemID: 1, Time: 1000}, s.OnSale[0])
 
 	assert.Equal(s.Items[0].CountBought, 1)
-	assert.Equal(s.Items[0].Power, Exponential{1, 0})
+	assert.Equal(s.Items[0].Power, Exponential{"[1,0]"})
 	assert.Equal(s.Items[0].CountBuilt, 1)
-	assert.Equal(s.Items[0].NextPrice, Exponential{1, 0})
+	assert.Equal(s.Items[0].NextPrice, Exponential{"[1,0]"})
 }
 
 func TestStatusBuy(t *testing.T) {
@@ -218,7 +218,7 @@ func TestMItem(t *testing.T) {
 func TestConv(t *testing.T) {
 	assert := assert.New(t)
 
-	assert.Equal(Exponential{0, 0}, big2exp(str2big("0")))
-	assert.Equal(Exponential{1234, 0}, big2exp(str2big("1234")))
-	assert.Equal(Exponential{111111111111110, 5}, big2exp(str2big("11111111111111000000")))
+	assert.Equal(Exponential{"[0,0]"}, big2exp(str2big("0")))
+	assert.Equal(Exponential{"[1234,0]"}, big2exp(str2big("1234")))
+	assert.Equal(Exponential{"[111111111111110,5]"}, big2exp(str2big("11111111111111000000")))
 }
