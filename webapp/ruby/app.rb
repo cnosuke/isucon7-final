@@ -1,6 +1,6 @@
 require 'erb'
 require 'sinatra/base'
-require 'newrelic_rpm'
+#require 'newrelic_rpm'
 require './game'
 
 class App < Sinatra::Base
