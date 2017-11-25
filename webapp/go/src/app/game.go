@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/big"
-	"strconv"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -107,6 +106,7 @@ var (
 	mItemById  map[int]mItem
 	big1000    *big.Int
 	big10Pow15 *big.Int
+	pow10ByN   map[int64]int64
 )
 
 func init() {
@@ -152,6 +152,14 @@ func init() {
 
 	big1000 = big.NewInt(1000)
 	big10Pow15 = big.NewInt(1000000000000000)
+
+	powNum := 30
+	pow10ByN = make(map[int64]int64, powNum)
+	currentPow10 := int64(1)
+	for i := 1; i <= powNum; i++ {
+		currentPow10 *= 10
+		pow10ByN[int64(i)] = currentPow10
+	}
 }
 
 func (item *mItem) GetPower(count int) *big.Int {
@@ -210,11 +218,9 @@ func big2exp(n *big.Int) Exponential {
 	}
 
 	s := n.String()
-	t, err := strconv.ParseInt(s[:15], 10, 64)
-	if err != nil {
-		log.Panic(err)
-	}
-	return Exponential{t, int64(len(s) - 15)}
+	ketasuu := int64(len(s))
+
+	return Exponential{new(big.Int).Div(n, big.NewInt(pow10ByN[ketasuu-15])).Int64(), ketasuu - 15}
 }
 
 func getCurrentTime() (int64, error) {
