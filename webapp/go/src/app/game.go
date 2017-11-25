@@ -448,14 +448,15 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 		totalMilliIsu = big.NewInt(0)
 		totalPower    = big.NewInt(0)
 
-		itemPower    = map[int]*big.Int{}    // ItemID => Power
-		itemPrice    = map[int]*big.Int{}    // ItemID => Price
-		itemOnSale   = map[int]int64{}       // ItemID => OnSale
-		itemBuilt    = map[int]int{}         // ItemID => BuiltCount
-		itemBought   = map[int]int{}         // ItemID => CountBought
-		itemBuilding = map[int][]Building{}  // ItemID => Buildings
-		itemPower0   = map[int]Exponential{} // ItemID => currentTime における Power
-		itemBuilt0   = map[int]int{}         // ItemID => currentTime における BuiltCount
+		itemPower     = map[int]*big.Int{}    // ItemID => Power
+		itemPrice     = map[int]*big.Int{}    // ItemID => Price
+		itemPrice1000 = map[int]*big.Int{}    // ItemID => Price * 1000
+		itemOnSale    = map[int]int64{}       // ItemID => OnSale
+		itemBuilt     = map[int]int{}         // ItemID => BuiltCount
+		itemBought    = map[int]int{}         // ItemID => CountBought
+		itemBuilding  = map[int][]Building{}  // ItemID => Buildings
+		itemPower0    = map[int]Exponential{} // ItemID => currentTime における Power
+		itemBuilt0    = map[int]int{}         // ItemID => currentTime における BuiltCount
 
 		addingAt = map[int64]Adding{}   // Time => currentTime より先の Adding
 		buyingAt = map[int64][]Buying{} // Time => currentTime より先の Buying
@@ -498,6 +499,7 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 		itemBuilt0[m.ItemID] = itemBuilt[m.ItemID]
 		price := m.GetPrice(itemBought[m.ItemID] + 1)
 		itemPrice[m.ItemID] = price
+		itemPrice1000[m.ItemID] = new(big.Int).Mul(price, big1000)
 		if 0 <= totalMilliIsuDiv1000.Cmp(price) {
 			itemOnSale[m.ItemID] = 0 // 0 は 時刻 currentTime で購入可能であることを表す
 		}
@@ -552,12 +554,11 @@ func calcStatus(currentTime int64, mItems map[int]mItem, addings []Adding, buyin
 		}
 
 		// 時刻 t で購入可能になったアイテムを記録する
-		totalMilliIsuDiv1000 = new(big.Int).Div(totalMilliIsu, big1000)
 		for itemID := range mItems {
 			if _, ok := itemOnSale[itemID]; ok {
 				continue
 			}
-			if 0 <= totalMilliIsuDiv1000.Cmp(itemPrice[itemID]) {
+			if 0 <= totalMilliIsu.Cmp(itemPrice1000[itemID]) {
 				itemOnSale[itemID] = t
 			}
 		}
