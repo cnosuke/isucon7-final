@@ -103,4 +103,5 @@ max_binlog_size   = 100M
 # ssl-cert=/etc/mysql/server-cert.pem
 # ssl-key=/etc/mysql/server-key.pem
 
-innodb_buffer_pool_size = 512MB
+innodb_buffer_pool_size = 256M
+innodb_log_file_size = 64M
