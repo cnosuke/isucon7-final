@@ -4,6 +4,13 @@ require 'json'
 require 'mysql2'
 
 class Game
+  HOSTS = %w(
+    app0131.isu7f.k0y.org
+    app0132.isu7f.k0y.org
+    app0133.isu7f.k0y.org
+    app0134.isu7f.k0y.org
+  )
+
   module Jsonable
     def to_json(*args)
       JSON.dump(as_json)
@@ -154,6 +161,28 @@ class Game
       else
         conn.close
       end
+    end
+
+    def is_leader?
+      !!(ENV.fetch('ISU_LEADER') { false })
+    end
+
+    def get_or_create_host_by_room(name)
+      conn = connect_db
+      host_id = conn.query("SELECT host_id FROM rooms WHERE room_name = '#{name}'").first&.fetch('host_id')
+
+      if host_id.nil?
+        host_id = conn.query(
+          "select host_id, count(1) as c from rooms group by host_id order by c limit 1"
+        ).first.fetch('host_id')
+
+        conn.query(
+          "INSERT INTO rooms VALUES('#{name}', #{host_id});"
+        )
+      end
+      conn.close
+
+      return Game::HOSTS[host_id]
     end
 
     def str2big(s)

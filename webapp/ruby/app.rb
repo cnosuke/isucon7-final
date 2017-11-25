@@ -22,6 +22,14 @@ class App < Sinatra::Base
   end
 
   get '/initialize' do
+    if ENV['RACK_ENV'] == 'production' && Game.is_leader?
+      Game::HOSTS[1..-1].each do |h|
+        Thread.new do
+          open("http://#{h}/initialize").read
+        end
+      end
+    end
+
     Game.initialize!
     204
   end
@@ -32,11 +40,15 @@ class App < Sinatra::Base
   end
 
   get '/room/:room_name' do
+    return "localhost:9292" unless ENV['RACK_ENV'] == 'production'
+    return 400 unless Game.is_leader? # リーダ以外は部屋を知らない
+
     room_name = ERB::Util.url_encode(params[:room_name])
+    host = Game.get_or_create_host_by_room(room_name)
     path = "/ws/#{room_name}"
 
     content_type :json
-    { 'host' => '', 'path' => path }.to_json
+    { 'host' => host, 'path' => path }.to_json
   end
 
   get '/' do
