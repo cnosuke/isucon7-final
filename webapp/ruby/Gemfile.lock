@@ -13,6 +13,7 @@ GEM
     multi_json (1.12.2)
     mustermann (1.0.1)
     mysql2 (0.4.10)
+    newrelic_rpm (4.6.0.338)
     puma (3.10.0)
     rack (2.0.3)
     rack-protection (2.0.0)
@@ -54,10 +55,11 @@ DEPENDENCIES
   concurrent-ruby-edge
   faye-websocket
   mysql2
+  newrelic_rpm
   puma
   rspec
   sinatra
   sinatra-contrib
 
 BUNDLED WITH
-   1.15.4
+   1.16.0

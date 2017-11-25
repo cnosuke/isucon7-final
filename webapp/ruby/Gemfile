@@ -6,6 +6,7 @@ gem 'mysql2'
 gem 'puma'
 gem 'sinatra'
 gem 'sinatra-contrib'
+gem 'newrelic_rpm'
 
 group :test do
   gem 'rspec'
