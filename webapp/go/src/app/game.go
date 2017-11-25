@@ -104,8 +104,9 @@ type mItem struct {
 }
 
 var (
-	mItemById map[int]mItem
-	big1000   *big.Int
+	mItemById  map[int]mItem
+	big1000    *big.Int
+	big10Pow16 *big.Int
 )
 
 func init() {
@@ -150,6 +151,7 @@ func init() {
 	}
 
 	big1000 = big.NewInt(1000)
+	big10Pow16 = big.NewInt(10000000000000000)
 }
 
 func (item *mItem) GetPower(count int) *big.Int {
@@ -203,12 +205,11 @@ func str2big(s string) *big.Int {
 }
 
 func big2exp(n *big.Int) Exponential {
-	s := n.String()
-
-	if len(s) <= 15 {
+	if n.Cmp(big10Pow16) <= 0 {
 		return Exponential{n.Int64(), 0}
 	}
 
+	s := n.String()
 	t, err := strconv.ParseInt(s[:15], 10, 64)
 	if err != nil {
 		log.Panic(err)
