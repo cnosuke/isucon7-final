@@ -13,8 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/jmoiron/sqlx"
-
-	"github.com/pkg/profile"
+	//"github.com/pkg/profile"
 )
 
 var (
