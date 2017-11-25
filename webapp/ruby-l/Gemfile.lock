@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     backports (3.10.3)
+    coderay (1.1.2)
     concurrent-ruby (1.0.5)
     concurrent-ruby-edge (0.3.1)
       concurrent-ruby (= 1.0.5)
@@ -10,10 +11,14 @@ GEM
     faye-websocket (0.10.7)
       eventmachine (>= 0.12.0)
       websocket-driver (>= 0.5.1)
+    method_source (0.9.0)
     multi_json (1.12.2)
     mustermann (1.0.1)
     mysql2 (0.4.10)
     newrelic_rpm (4.6.0.338)
+    pry (0.11.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
     puma (3.10.0)
     rack (2.0.3)
     rack-protection (2.0.0)
@@ -56,6 +61,7 @@ DEPENDENCIES
   faye-websocket
   mysql2
   newrelic_rpm
+  pry
   puma
   rspec
   sinatra

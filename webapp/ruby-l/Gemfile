@@ -11,3 +11,5 @@ gem 'newrelic_rpm'
 group :test do
   gem 'rspec'
 end
+
+gem 'pry'
