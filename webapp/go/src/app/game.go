@@ -156,7 +156,6 @@ func init() {
 	powNum := 40
 	pow10ByN = make(map[int64]*big.Int, powNum)
 	currentPow10 := big.NewInt(1)
-	pow10ByN[0] = currentPow10
 	for i := 1; i <= powNum; i++ {
 		currentPow10 = new(big.Int).Mul(currentPow10, big.NewInt(10))
 		pow10ByN[int64(i)] = currentPow10
