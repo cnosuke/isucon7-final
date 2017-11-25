@@ -205,7 +205,7 @@ func str2big(s string) *big.Int {
 }
 
 func big2exp(n *big.Int) Exponential {
-	if n.Cmp(big10Pow16) <= 0 {
+	if n.Cmp(big10Pow16) < 0 {
 		return Exponential{n.Int64(), 0}
 	}
 
