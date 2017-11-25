@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/big"
-	"strconv"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -34,12 +33,14 @@ type GameResponse struct {
 // 10進数の指数表記に使うデータ。JSONでは [仮数部, 指数部] という2要素配列になる。
 type Exponential struct {
 	// Mantissa * 10 ^ Exponent
-	Mantissa int64
-	Exponent int64
+	//Mantissa int64
+	//Exponent int64
+	Str string
 }
 
 func (n Exponential) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("[%d,%d]", n.Mantissa, n.Exponent)), nil
+	//return []byte(fmt.Sprintf("[%d,%d]", n.Mantissa, n.Exponent)), nil
+	return []byte(n.Str), nil
 }
 
 type Adding struct {
@@ -206,15 +207,11 @@ func str2big(s string) *big.Int {
 
 func big2exp(n *big.Int) Exponential {
 	if n.Cmp(big10Pow15) < 0 {
-		return Exponential{n.Int64(), 0}
+		return Exponential{fmt.Sprintf("[%d,%d]", n.Int64(), 0)}
 	}
 
 	s := n.String()
-	t, err := strconv.ParseInt(s[:15], 10, 64)
-	if err != nil {
-		log.Panic(err)
-	}
-	return Exponential{t, int64(len(s) - 15)}
+	return Exponential{fmt.Sprintf("[%s,%d]", s[:15], int64(len(s)-15))}
 }
 
 func getCurrentTime() (int64, error) {
