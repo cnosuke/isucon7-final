@@ -151,7 +151,7 @@ func init() {
 	}
 
 	big1000 = big.NewInt(1000)
-	big10Pow16 = big.NewInt(10000000000000000)
+	big10Pow16 = big.NewInt(1000000000000000)
 }
 
 func (item *mItem) GetPower(count int) *big.Int {
