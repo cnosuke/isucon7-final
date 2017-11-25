@@ -77,16 +77,31 @@ class Game
       @price2 = price2
       @price3 = price3
       @price4 = price4
+
+      @power_by_count = {}
+      @price_by_count = {}
+      (0..50).each do |count|
+        @power_by_count[count] = _get_power(count)
+        @price_by_count[count] = _get_price(count)
+      end
     end
 
     def get_power(count)
+      @power_by_count.fetch(count, _get_power(count))
+    end
+
+    def get_price(count)
+      @price_by_count.fetch(count, _get_price(count))
+    end
+
+    def _get_power(count)
       # power(x):=(p3*x + 1) * p4 ** (p1*x + p2)
       s = @power3 * count + 1
       t = @power4 ** (@power1 * count + @power2)
       s * t
     end
 
-    def get_price(count)
+    def _get_price(count)
       # price(x):=(p3*x + 1) * p4 ** (p1*x + p2)
       s = @price3 * count + 1
       t = @price4 ** (@price1 * count + @price2)
