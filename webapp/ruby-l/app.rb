@@ -22,10 +22,10 @@ class App < Sinatra::Base
   end
 
   # これ使って無いわ
-  # get '/room/' do
-  #   content_type :json
-  #   { 'host' => '', 'path' => '/ws' }.to_json
-  # end
+  get '/room/' do
+    content_type :json
+    { 'host' => '', 'path' => '/ws' }.to_json
+  end
 
   get '/pry' do
     binding.pry
